@@ -4,7 +4,7 @@ import argparse
 from collections import defaultdict
 
 
-colorlist = [
+COLORLIST = [
     "red",
     "green",
     "blue",
@@ -15,14 +15,32 @@ colorlist = [
     "orange",
 ]
 
-parser = argparse.ArgumentParser()
+
+class SmartFormatter(argparse.HelpFormatter):
+
+    def _split_lines(self, text, width):
+        if text.startswith('R|'):
+            return text[2:].splitlines()  
+        # this is the RawTextHelpFormatter._split_lines
+        return argparse.HelpFormatter._split_lines(self, text, width)
+    
+
+parser = argparse.ArgumentParser(formatter_class=SmartFormatter)
+
 parser.add_argument(
     "-p", "--path",
-    help="specify the path of your dataset, working directory is default",
+    help="R|specify the path of your dataset, if not given, current directory will be used. Notice that the file structure of dataset is assumed like:\n"
+         "dataset\n"
+         "├── images\n"
+         "    ├── 1.jpg\n"
+         "    ├── ...\n"
+         "├── labels\n"
+         "    ├── 1.txt\n"
+         "    ├── ...\n",
     default="./",
 )
 parser.add_argument("-s", "--save", action="store_true", help="to save the result in current directory")
-parser.add_argument("-t", "--txtpath", help="if given, program will read images from txt file, in which each line is a image path. You could give either a single txt path or a directory path, if it's a directory, program will read all txt files in it.")
+parser.add_argument("-t", "--txtpath", metavar="PATH", help="if given, program will read images from txt file, in which each line is a image path. Either a single txt path or a directory path could be given, if it's a directory, program will read all txt files in it.")
 
 args = parser.parse_args()
 datapath = args.path
@@ -78,7 +96,7 @@ def plot(dict, title="", xlabel=""):
     x = dict.keys()
     y = dict.values()
     xint = range(min(x), max(x) + 1)
-    plt.bar(x, y, color=colorlist, width=0.9)
+    plt.bar(x, y, color=COLORLIST, width=0.9)
     plt.xticks(xint)
     plt.title(title)
     plt.xlabel(xlabel)
