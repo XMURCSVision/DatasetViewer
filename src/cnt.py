@@ -14,6 +14,7 @@ colorlist = [
     "slategray",
     "orange",
 ]
+
 parser = argparse.ArgumentParser()
 parser.add_argument(
     "--path",
@@ -90,6 +91,8 @@ def plot(dict, title="", xlabel=""):
         plt.savefig(savepath.format(name, idx))
     plt.show()
 
+for key,value in sorted(classlist.items()):
+    print(f"class:{key} has {value} instances")
 
 plot(classlist, title="label_classes", xlabel="classes")
 plot(annotationlenlist, title="messages in single row", xlabel="length")
