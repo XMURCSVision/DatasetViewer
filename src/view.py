@@ -8,41 +8,65 @@ import argparse
 class SmartFormatter(argparse.HelpFormatter):
 
     def _split_lines(self, text, width):
-        if text.startswith('R|'):
-            return text[2:].splitlines()  
+        if text.startswith("R|"):
+            return text[2:].splitlines()
         # this is the RawTextHelpFormatter._split_lines
         return argparse.HelpFormatter._split_lines(self, text, width)
-    
+
 
 parser = argparse.ArgumentParser(formatter_class=SmartFormatter)
 
 parser.add_argument(
-    "-p", "--path",
+    "-p",
+    "--path",
     help="R|specify the path of your dataset, if not given, current directory will be used. Notice that the file structure of dataset is assumed like:\n"
-         "dataset\n"
-         "├── images\n"
-         "    ├── 1.jpg\n"
-         "    ├── ...\n"
-         "├── labels\n"
-         "    ├── 1.txt\n"
-         "    ├── ...\n",
+    "dataset\n"
+    "├── images\n"
+    "    ├── 1.jpg\n"
+    "    ├── ...\n"
+    "├── labels\n"
+    "    ├── 1.txt\n"
+    "    ├── ...\n",
     default="./",
 )
-parser.add_argument("-t", "--txtpath", metavar="PATH", help="if given, program will read images from txt file, in which each line is a image path. Either a single txt path or a directory path could be given, if it's a directory, program will read all txt files in it.")
-parser.add_argument("-k", "--keypoints", action="store_true", help="draw key points if there is any in label")
 parser.add_argument(
-    "-c", "--class",metavar="LIST",
+    "-t",
+    "--txtpath",
+    metavar="PATH",
+    help="if given, program will read images from txt file, in which each line is a image path. Either a single txt path or a directory path could be given, if it's a directory, program will read all txt files in it.",
+)
+parser.add_argument(
+    "-k",
+    "--keypoints",
+    action="store_true",
+    help="draw key points if there is any in label",
+)
+parser.add_argument(
+    "-c",
+    "--class",
+    metavar="LIST",
     help="specify class number which you'd like to view, either list or a single number is OK, spilt the list with ','",
     dest="_class",
 )
-parser.add_argument("-n", "--num", help="number of images you'd like to view, default 20", type=int)
+parser.add_argument(
+    "-n", "--num", help="number of images you'd like to view, default 20", type=int
+)
 
 args = parser.parse_args()
 datapath = args.path if args.path else "./"
 classlist = args._class.split(",") if args._class else None
 imgnum = args.num if args.num else 20
 txtpath = args.txtpath
-colorlist = [(255, 0, 0), (0, 255, 0), (0, 0, 255), (0, 255, 255), (127,127,127), (255,0,255),(255,255,0),(255,255,255)]
+colorlist = [
+    (255, 0, 0),
+    (0, 255, 0),
+    (0, 0, 255),
+    (0, 255, 255),
+    (127, 127, 127),
+    (255, 0, 255),
+    (255, 255, 0),
+    (255, 255, 255),
+]
 
 
 def pntn2pnt(points):
@@ -108,7 +132,7 @@ for file in imlist:
                 points = pntn2pnt(points)
                 cv2.polylines(im, [points], True, (255, 255, 255), 1)
                 for idx, point in enumerate(points):
-                    cv2.circle(im, point, 2, colorlist[idx%len(colorlist)], 4)
+                    cv2.circle(im, point, 2, colorlist[idx % len(colorlist)], 4)
             cv2.rectangle(
                 im,
                 xywh[0, :] - xywh[1, :] // 2,
