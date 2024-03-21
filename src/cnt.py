@@ -21,11 +21,12 @@ parser.add_argument(
     help="specify the path of your dataset, working directory is default",
     default="./",
 )
-parser.add_argument("-s", "--save", action="store_true")
-parser.add_argument("-t", "--txt")
+parser.add_argument("-s", "--save", action="store_true", help="to save the result in current directory")
+parser.add_argument("-t", "--txtpath", help="if given, program will read images from txt file, in which each line is a image path. You could give either a single txt path or a directory path, if it's a directory, program will read all txt files in it.")
+
 args = parser.parse_args()
 datapath = args.path
-txtpath = args.txt
+txtpath = args.txtpath
 
 if txtpath:
     if not os.path.exists(txtpath):

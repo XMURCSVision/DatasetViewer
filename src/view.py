@@ -5,10 +5,10 @@ import numpy as np
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--txt")
-parser.add_argument("-k", "--keypoints", action="store_true")
+parser.add_argument("-t", "--txtpath", help="if given, program will read images from txt file, in which each line is a image path. You could give either a single txt path or a directory path, if it's a directory, program will read all txt files in it.")
+parser.add_argument("-k", "--keypoints", action="store_true", help="draw key points if there is any in label")
 parser.add_argument(
-    "--path", help="specify the path of your dataset, working directory is default"
+    "--path", help="specify the path of your dataset, current working directory is default"
 )
 parser.add_argument(
     "--class",
@@ -16,11 +16,12 @@ parser.add_argument(
     dest="_class",
 )
 parser.add_argument("--num", help="number of images you'd like to view", type=int)
+
 args = parser.parse_args()
 datapath = args.path if args.path else "./"
 classlist = args._class.split(",") if args._class else None
 imgnum = args.num if args.num else 20
-txtpath = args.txt
+txtpath = args.txtpath
 colorlist = [(255, 0, 0), (0, 255, 0), (0, 0, 255), (0, 255, 255), (127,127,127), (255,0,255),(255,255,0),(255,255,255)]
 
 
