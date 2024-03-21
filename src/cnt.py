@@ -17,7 +17,7 @@ colorlist = [
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
-    "--path",
+    "-p", "--path",
     help="specify the path of your dataset, working directory is default",
     default="./",
 )

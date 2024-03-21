@@ -8,10 +8,10 @@ parser = argparse.ArgumentParser()
 parser.add_argument("-t", "--txtpath", help="if given, program will read images from txt file, in which each line is a image path. You could give either a single txt path or a directory path, if it's a directory, program will read all txt files in it.")
 parser.add_argument("-k", "--keypoints", action="store_true", help="draw key points if there is any in label")
 parser.add_argument(
-    "--path", help="specify the path of your dataset, current working directory is default"
+    "-p", "--path", help="specify the path of your dataset, current working directory is default"
 )
 parser.add_argument(
-    "--class",
+    "-c", "--class",
     help="specify class number which you'd like to view, either list or a single number is OK, spilt the list with ','",
     dest="_class",
 )
