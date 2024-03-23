@@ -118,7 +118,7 @@ print(classlist)
 
 random.shuffle(imlist)
 
-del_list = []
+del_list = set()
 idx = 0
 while idx < len(imlist):
     file = imlist[idx]
@@ -188,7 +188,7 @@ while idx < len(imlist):
         continue
     
     if ord("d") == q:
-        del_list.append(file)
+        del_list.add(file)
         print(f"deleted file {file}, press 'r' for recovery")
         continue
     
@@ -201,5 +201,6 @@ for file in del_list:
     filename = os.path.splitext(filename)[0] + ".txt"
     labelpath = "{}/labels/{}".format(path, filename)
     os.remove(labelpath)
+    print(f"deleted {file}")
     
 cv2.destroyAllWindows()
