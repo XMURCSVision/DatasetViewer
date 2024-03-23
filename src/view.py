@@ -38,8 +38,8 @@ parser.add_argument(
 parser.add_argument(
     "-k",
     "--keypoints",
-    action="store_true",
     help="draw key points if there is any in label",
+    type=int, 
 )
 parser.add_argument(
     "-c",
@@ -98,6 +98,7 @@ else:
     imgpath = os.path.join(datapath, "images/")
     imlist = [os.path.join(imgpath, im) for im in os.listdir(imgpath)]
 
+print(colorlist)
 print(classlist)
 random.shuffle(imlist)
 displayed = 0
@@ -128,7 +129,7 @@ for file in imlist:
             xywh = list(map(float, line.split()[1:5]))
             xywh = pntn2pnt(xywh)
             if args.keypoints:
-                points = list(map(float, line.split()[5:]))
+                points = list(map(float, line.split()[5:5+args.keypoints*2]))
                 points = pntn2pnt(points)
                 cv2.polylines(im, [points], True, (255, 255, 255), 1)
                 for idx, point in enumerate(points):

@@ -87,6 +87,7 @@ else:
 
 classlist = defaultdict(int)
 annotationlenlist = defaultdict(int)
+examples = dict()
 for file in labels:
     if not os.path.exists(file):
         continue
@@ -98,6 +99,7 @@ for file in labels:
             # xywh = list(map(float, annotations[1:5]))
             # points = list(map(float, annotations[5:]))
             annotationlenlist[len(annotations)] += 1
+            examples[len(annotations)] = file
 
 
 def plot(dict, title="", xlabel=""):
@@ -122,5 +124,13 @@ def plot(dict, title="", xlabel=""):
 for key, value in sorted(classlist.items()):
     print(f"class:{key} has {value} instances")
 
+
+
+for ex in annotationlenlist.items():
+    print(f"{ex[1]} annotations have {ex[0]} messages in single row")
+    
+for ex in examples.items():
+    print(f"example of {ex[0]} messages in single row: {ex[1]}")
+    
 plot(classlist, title="label_classes", xlabel="classes")
 plot(annotationlenlist, title="messages in single row", xlabel="length")
