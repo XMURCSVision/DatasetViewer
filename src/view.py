@@ -14,7 +14,11 @@ class SmartFormatter(argparse.HelpFormatter):
         return argparse.HelpFormatter._split_lines(self, text, width)
 
 
-parser = argparse.ArgumentParser(formatter_class=SmartFormatter)
+parser = argparse.ArgumentParser(
+    formatter_class=SmartFormatter,
+    description="view dataset, press 'q' to exit, press 'd' to delete, press 'r' to recover delete, other keys for next image",
+    epilog="Enjoy it!",
+)
 
 parser.add_argument(
     "-p",
@@ -39,7 +43,7 @@ parser.add_argument(
     "-k",
     "--keypoints",
     help="draw key points if there is any in label",
-    type=int, 
+    type=int,
 )
 parser.add_argument(
     "-c",
@@ -50,6 +54,12 @@ parser.add_argument(
 )
 parser.add_argument(
     "-n", "--num", help="number of images you'd like to view, default 20", type=int
+)
+
+parser.add_argument(
+    "-f",
+    "--file",
+    help="if config, only read given file/files, files should split with ','",
 )
 
 args = parser.parse_args()
@@ -94,22 +104,34 @@ if txtpath:
     for txt in txtlist:
         with open(txt, "r") as f:
             imlist.extend([line.replace("\n", "") for line in f.readlines()])
+elif args.file:
+    imgpath = os.path.join(datapath, "images/")
+    imlist = [os.path.join(imgpath, im) for im in args.file.split(",")]
 else:
     imgpath = os.path.join(datapath, "images/")
     imlist = [os.path.join(imgpath, im) for im in os.listdir(imgpath)]
 
+
 print(colorlist)
 print(classlist)
+
+
 random.shuffle(imlist)
+
+print(imlist)
+del_list = []
 displayed = 0
-for file in imlist:
-    if displayed == imgnum:
+idx = 0
+while idx < len(imlist):
+    file = imlist[idx]
+    if displayed == imgnum and not args.file:
         break
     path, filename = file.split("/images/")
     filename = os.path.splitext(filename)[0] + ".txt"
     labelpath = "{}/labels/{}".format(path, filename)
     if not os.path.exists(labelpath):
         print(f"cannot find label in {labelpath}")
+        idx += 1
         continue
     if classlist:
         with open(labelpath) as f:
@@ -129,7 +151,7 @@ for file in imlist:
             xywh = list(map(float, line.split()[1:5]))
             xywh = pntn2pnt(xywh)
             if args.keypoints:
-                points = list(map(float, line.split()[5:5+args.keypoints*2]))
+                points = list(map(float, line.split()[5 : 5 + args.keypoints * 2]))
                 points = pntn2pnt(points)
                 cv2.polylines(im, [points], True, (255, 255, 255), 1)
                 for idx, point in enumerate(points):
@@ -150,5 +172,26 @@ for file in imlist:
     q = cv2.waitKey(0)
     if ord("q") == q:
         break
+    if ord("r") == q:
+        if file in del_list:
+            del_list.remove(file)
+            print(f'recovered file {file}')
+        else:
+            print('file was not deleted')
+        continue
+    if ord("d") == q:
+        del_list.append(file)
+        print(f"deleted file {file}, press 'r' for recovery")
+        continue
+    
+    idx += 1
     displayed += 1
+
+for file in del_list:
+    os.remove(file)
+    path, filename = file.split("/images/")
+    filename = os.path.splitext(filename)[0] + ".txt"
+    labelpath = "{}/labels/{}".format(path, filename)
+    os.remove(labelpath)
+    
 cv2.destroyAllWindows()
