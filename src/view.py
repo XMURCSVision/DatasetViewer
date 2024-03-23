@@ -118,14 +118,14 @@ print(classlist)
 
 random.shuffle(imlist)
 
-print(imlist)
 del_list = []
-displayed = 0
 idx = 0
 while idx < len(imlist):
     file = imlist[idx]
-    if displayed == imgnum and not args.file:
+    print(file, "now")
+    if idx == imgnum and not args.file:
         break
+    
     path, filename = file.split("/images/")
     filename = os.path.splitext(filename)[0] + ".txt"
     labelpath = "{}/labels/{}".format(path, filename)
@@ -139,7 +139,9 @@ while idx < len(imlist):
                 if line.split()[0] in classlist:
                     break
             else:
+                idx+=1
                 continue
+    
     im = cv2.imread(file)
     h, w, _ = im.shape
     while h > 960 or w > 1440:
@@ -154,8 +156,9 @@ while idx < len(imlist):
                 points = list(map(float, line.split()[5 : 5 + args.keypoints * 2]))
                 points = pntn2pnt(points)
                 cv2.polylines(im, [points], True, (255, 255, 255), 1)
-                for idx, point in enumerate(points):
-                    cv2.circle(im, point, 2, colorlist[idx % len(colorlist)], 4)
+                for i, point in enumerate(points):
+                    cv2.circle(im, point, 2, colorlist[i % len(colorlist)], 4)
+            
             cv2.rectangle(
                 im,
                 xywh[0, :] - xywh[1, :] // 2,
@@ -167,11 +170,15 @@ while idx < len(imlist):
                 im, f"{tag}", xywh[0, :] + xywh[1, :] // 2, 0, 0.75, (255, 255, 255), 2
             )
             print(line)
+        
     cv2.putText(im, f"{file[max(len(file)-20,0):]}", (0, 20), 0, 0.5, (0, 0, 255), 1)
+
     cv2.imshow("", im)
     q = cv2.waitKey(0)
+    print(q)
     if ord("q") == q:
         break
+    
     if ord("r") == q:
         if file in del_list:
             del_list.remove(file)
@@ -179,13 +186,14 @@ while idx < len(imlist):
         else:
             print('file was not deleted')
         continue
+    
     if ord("d") == q:
         del_list.append(file)
         print(f"deleted file {file}, press 'r' for recovery")
         continue
     
     idx += 1
-    displayed += 1
+    
 
 for file in del_list:
     os.remove(file)
