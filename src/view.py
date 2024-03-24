@@ -119,11 +119,11 @@ print(classlist)
 random.shuffle(imlist)
 
 del_list = set()
-idx = 0
+idx,view = 0,0
 while idx < len(imlist):
     file = imlist[idx]
     print(file, "now")
-    if idx == imgnum and not args.file:
+    if view == imgnum and not args.file:
         break
     
     path, filename = file.split("/images/")
@@ -192,6 +192,7 @@ while idx < len(imlist):
         print(f"deleted file {file}, press 'r' for recovery")
         continue
     
+    view += 1
     idx += 1
     
 
