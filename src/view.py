@@ -159,15 +159,17 @@ while idx < len(imlist):
                 for i, point in enumerate(points):
                     cv2.circle(im, point, 2, colorlist[i % len(colorlist)], 4)
             
+            pt1 = tuple((xywh[0, :] - xywh[1, :] // 2).astype(int))
+            pt2 = tuple((xywh[0, :] + xywh[1, :] // 2).astype(int))
+            
             cv2.rectangle(
                 im,
-                xywh[0, :] - xywh[1, :] // 2,
-                xywh[0, :] + xywh[1, :] // 2,
-                (255, 255, 255),
-                1,
+                pt1,pt2,
+                color=(255, 255, 255),
+                thickness=1,
             )
             cv2.putText(
-                im, f"{tag}", xywh[0, :] + xywh[1, :] // 2, 0, 0.75, (255, 255, 255), 2
+                im, f"{tag}", pt2, 0, 0.75, (255, 255, 255), 2
             )
             print(line)
         
